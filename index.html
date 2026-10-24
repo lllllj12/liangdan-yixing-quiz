@@ -75,7 +75,7 @@
       padding: 12px 16px;
       margin-bottom: 16px;
     }
-    #nextBtn {
+    #nextBtn, #submitBtn {
       padding: 10px 26px;
       font-size: 16px;
       border: none;
@@ -89,6 +89,11 @@
       width: 100%;
       min-height: 44px;
       margin-bottom: 10px;
+    }
+    .option-btn.selected {
+      box-shadow: 0 0 0 2px #ffd23f;
+      background: #2c3560;
+      color: #fff;
     }
     #retryBtn {
       margin-top: 12px;
@@ -184,6 +189,7 @@
 
     <div id="question"></div>
     <div id="options"></div>
+    <button id="submitBtn" type="button" style="display:none">提交答案</button>
     <div id="feedback"></div>
     <button id="nextBtn" style="display:none">下一题</button>
     <button id="retryBtn" type="button" style="display:none">重新开始</button>
@@ -472,25 +478,37 @@
 
     function renderQuestion() {
       var q = quizQuestions[currentIndex];
+      window.selectedIndex = null;
       document.getElementById("question").textContent = q.question;
       var optionsBox = document.getElementById("options");
       optionsBox.textContent = "";
+      document.getElementById("submitBtn").style.display = "none";
       q.options.forEach(function (text, idx) {
         var btn = document.createElement("button");
         btn.type = "button";
         btn.className = "option-btn";
         btn.textContent = text;
         btn.addEventListener("click", function () {
-          checkAnswer(idx);
+          selectOption(btn, idx);
         });
         optionsBox.appendChild(btn);
       });
+    }
+
+    function selectOption(btn, idx) {
+      selectedIndex = idx;
+      document.querySelectorAll(".option-btn").forEach(function (b) {
+        b.classList.remove("selected");
+      });
+      btn.classList.add("selected");
+      document.getElementById("submitBtn").style.display = "inline-block";
     }
 
     function checkAnswer(selectedIndex) {
       var q = quizQuestions[currentIndex];
       var correctText = q.options[q.answerIndex];
       var feedback = document.getElementById("feedback");
+      document.getElementById("submitBtn").style.display = "none";
       if (selectedIndex === q.answerIndex) {
         feedback.textContent = "回答正确";
         lightUpStar();
@@ -517,6 +535,12 @@
     function hideNextBtn() {
       document.getElementById("nextBtn").style.display = "none";
     }
+
+    document.getElementById("submitBtn").addEventListener("click", function () {
+      if (selectedIndex !== null) {
+        checkAnswer(selectedIndex);
+      }
+    });
 
     document.getElementById("nextBtn").addEventListener("click", function () {
       var feedback = document.getElementById("feedback");
