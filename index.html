@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>两弹一星知识闯关</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 20px 16px;
+      background: #10151c;
+      color: #e8e8e8;
+      font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+    }
+    #app {
+      max-width: 100%;
+      margin: 0 auto;
+    }
+    #wechatHint {
+      position: sticky;
+      top: 0;
+      z-index: 9999;
+      background: #fff3cd;
+      color: #664d03;
+      padding: 8px 12px;
+      font-size: 14px;
+      line-height: 1.4;
+      text-align: center;
+      border-bottom: 1px solid #ffe69c;
+    }
+    h1 {
+      font-size: 30px;
+      text-align: center;
+      margin: 0 0 18px;
+      letter-spacing: 2px;
+    }
+    #starBar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 26px;
+    }
+    .star {
+      flex: 0 0 auto;
+      width: 30px;
+      height: 30px;
+      background: #4a5560;
+      clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+    }
+    .star.lit {
+      background: #ffd23f;
+    }
+    #question {
+      min-height: 72px;
+      border: 1px solid #2c3540;
+      border-radius: 8px;
+      padding: 16px;
+      font-size: 20px;
+      margin-bottom: 16px;
+    }
+    #options {
+      min-height: 120px;
+      border: 1px solid #2c3540;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    #feedback {
+      min-height: 40px;
+      border: 1px solid #2c3540;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 16px;
+    }
+    #nextBtn {
+      padding: 10px 26px;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      background: #2c6fbb;
+      color: #fff;
+      cursor: pointer;
+    }
+    .option-btn {
+      display: block;
+      width: 100%;
+      min-height: 44px;
+      margin-bottom: 10px;
+    }
+    #retryBtn {
+      margin-top: 12px;
+      padding: 10px 26px;
+      font-size: 16px;
+      border: 1px solid #d8a72c;
+      border-radius: 6px;
+      background: transparent;
+      color: #ffd23f;
+      cursor: pointer;
+    }
+    #card {
+      max-width: 90vw;
+      margin: 18px auto 0;
+      padding: 28px 24px;
+      text-align: center;
+      color: #ffe9b3;
+      background: linear-gradient(180deg, #7a1414 0%, #450c0c 100%);
+      border: 2px solid #d8a72c;
+      border-radius: 10px;
+    }
+    .card-title {
+      margin: 0 0 6px;
+      font-size: 32px;
+      letter-spacing: 6px;
+      color: #ffd23f;
+    }
+    .card-subtitle {
+      margin: 0 0 16px;
+      font-size: 16px;
+      letter-spacing: 2px;
+      color: #f0c98a;
+    }
+    #cardProgress {
+      margin: 0 0 18px;
+      font-size: 18px;
+      color: #fff;
+    }
+    .card-slogan {
+      margin: 0 auto 22px;
+      padding: 14px 10px;
+      max-width: 620px;
+      font-size: 15px;
+      line-height: 1.9;
+      word-break: break-all;
+      border-top: 1px solid rgba(216, 167, 44, 0.55);
+      border-bottom: 1px solid rgba(216, 167, 44, 0.55);
+    }
+    #restartBtn {
+      padding: 10px 32px;
+      font-size: 16px;
+      letter-spacing: 2px;
+      border: none;
+      border-radius: 6px;
+      background: #d8a72c;
+      color: #450c0c;
+      cursor: pointer;
+    }
+    @media (max-width: 420px) {
+      body { padding: 16px 12px; }
+      h1 { font-size: 24px; letter-spacing: 1px; margin-bottom: 14px; }
+      #starBar { gap: 8px; margin-bottom: 18px; }
+      .star { width: 26px; height: 26px; }
+      #question { min-height: 60px; padding: 12px; font-size: 17px; }
+      #options { padding: 12px; }
+      .option-btn { font-size: 15px; }
+      #feedback { padding: 10px 12px; }
+      #card { padding: 22px 14px; }
+      .card-title { font-size: 26px; letter-spacing: 3px; }
+      .card-subtitle { font-size: 14px; }
+      #cardProgress { font-size: 16px; }
+      .card-slogan { font-size: 14px; line-height: 1.8; }
+    }
+  </style>
+</head>
+<body>
+  <div id="wechatHint" style="display:none">如微信内无法打开，请点右上角选择在浏览器中打开</div>
+  <div id="app">
+    <h1>两弹一星知识闯关</h1>
+
+    <div id="starBar">
+      <span class="star"></span>
+      <span class="star"></span>
+      <span class="star"></span>
+      <span class="star"></span>
+      <span class="star"></span>
+      <span class="star"></span>
+      <span class="star"></span>
+      <span class="star"></span>
+      <span class="star"></span>
+      <span class="star"></span>
+    </div>
+
+    <div id="question"></div>
+    <div id="options"></div>
+    <div id="feedback"></div>
+    <button id="nextBtn" style="display:none">下一题</button>
+    <button id="retryBtn" type="button" style="display:none">重新开始</button>
+    <div id="card" style="display:none">
+      <h2 class="card-title">星火传递者</h2>
+      <p class="card-subtitle">两弹一星知识闯关</p>
+      <p id="cardProgress">已集星：0/10</p>
+      <p class="card-slogan">热爱祖国、无私奉献，自力更生、艰苦奋斗，大力协同、勇于登攀</p>
+      <button id="restartBtn" type="button">再玩一次</button>
+    </div>
+  </div>
+
+  <script>
+    window.QUESTIONS = [
+      {
+        id: 1,
+        category: "元勋事迹",
+        question: "被誉为“两弹元勋”的科学家是谁？",
+        options: ["邓稼先", "袁隆平", "屠呦呦", "南仁东"],
+        answerIndex: 0
+      },
+      {
+        id: 2,
+        category: "元勋事迹",
+        question: "被誉为“中国航天之父”的科学家是谁？",
+        options: ["钱三强", "钱学森", "李四光", "茅以升"],
+        answerIndex: 1
+      },
+      {
+        id: 3,
+        category: "元勋事迹",
+        question: "“两弹一星”元勋中唯一以烈士身份被追授功勋奖章的是谁？",
+        options: ["钱伟长", "赵九章", "陈芳允", "郭永怀"],
+        answerIndex: 3
+      },
+      {
+        id: 4,
+        category: "重大事件",
+        question: "中国第一颗原子弹爆炸成功是哪一年？",
+        options: ["1949年", "1956年", "1964年", "1978年"],
+        answerIndex: 2
+      },
+      {
+        id: 5,
+        category: "重大事件",
+        question: "中国第一颗氢弹爆炸成功是哪一年？",
+        options: ["1967年", "1971年", "1980年", "1986年"],
+        answerIndex: 0
+      },
+      {
+        id: 6,
+        category: "重大事件",
+        question: "中国第一颗人造地球卫星“东方红一号”发射成功是哪一年？",
+        options: ["1958年", "1970年", "1975年", "1984年"],
+        answerIndex: 1
+      },
+      {
+        id: 7,
+        category: "精神内涵",
+        question: "“两弹一星”精神的核心表述是什么？",
+        options: [
+          "富强、民主、文明、和谐",
+          "解放思想、实事求是、与时俱进",
+          "爱国、进步、民主、科学",
+          "热爱祖国、无私奉献，自力更生、艰苦奋斗，大力协同、勇于登攀"
+        ],
+        answerIndex: 3
+      },
+      {
+        id: 8,
+        category: "精神内涵",
+        question: "“两弹一星”精神中“自力更生、艰苦奋斗”强调什么？",
+        options: [
+          "依靠引进国外先进技术快速见效",
+          "以经济效益作为唯一衡量标准",
+          "立足自身条件攻克难关",
+          "优先保障科研人员生活待遇"
+        ],
+        answerIndex: 2
+      },
+      {
+        id: 9,
+        category: "元勋事迹",
+        question: "被誉为“中国氢弹之父”的科学家是谁？",
+        options: ["于敏", "邓稼先", "王淦昌", "朱光亚"],
+        answerIndex: 0
+      },
+      {
+        id: 10,
+        category: "元勋事迹",
+        question: "主持研制成功中国第一枚探空火箭的科学家是谁？",
+        options: ["王希季", "赵九章", "陈芳允", "任新民"],
+        answerIndex: 0
+      },
+      {
+        id: 11,
+        category: "元勋事迹",
+        question: "既担任“东方红一号”卫星技术总负责人、又出任探月工程首任总设计师的科学家是谁？",
+        options: ["孙家栋", "任新民", "王希季", "王大珩"],
+        answerIndex: 0
+      },
+      {
+        id: 12,
+        category: "元勋事迹",
+        question: "被誉为中国航天事业“总总师”的科学家是谁？",
+        options: ["孙家栋", "屠守锷", "任新民", "黄纬禄"],
+        answerIndex: 2
+      },
+      {
+        id: 13,
+        category: "元勋事迹",
+        question: "带领团队研制成功原子弹铀同位素分离关键部件“甲种分离膜”的科学家是谁？",
+        options: ["吴自良", "王大珩", "陈芳允", "赵九章"],
+        answerIndex: 0
+      },
+      {
+        id: 14,
+        category: "元勋事迹",
+        question: "我国核武器研制的主要组织领导者之一，被同事们称为“众帅之帅”的科学家是谁？",
+        options: ["朱光亚", "彭桓武", "王淦昌", "邓稼先"],
+        answerIndex: 0
+      },
+      {
+        id: 15,
+        category: "元勋事迹",
+        question: "中国近代光学工程的主要奠基人、为核试验光学测控作出重要贡献的科学家是谁？",
+        options: ["陈芳允", "王大珩", "杨嘉墀", "程开甲"],
+        answerIndex: 1
+      },
+      {
+        id: 16,
+        category: "元勋事迹",
+        question: "1968年因飞机失事遇难、在烈焰中与警卫员一起保护住核武器试验资料的是哪位科学家？",
+        options: ["赵九章", "钱三强", "郭永怀", "王淦昌"],
+        answerIndex: 2
+      },
+      {
+        id: 17,
+        category: "元勋事迹",
+        question: "在氢弹原理上提出完整设想、我国氢弹构型的主要设计者是谁？",
+        options: ["王淦昌", "于敏", "邓稼先", "程开甲"],
+        answerIndex: 1
+      },
+      {
+        id: 18,
+        category: "元勋事迹",
+        question: "与何泽慧共同发现铀核“三裂变”现象、被誉为中国原子能事业奠基人的科学家是谁？",
+        options: ["钱三强", "王淦昌", "赵忠尧", "钱伟长"],
+        answerIndex: 0
+      },
+      {
+        id: 19,
+        category: "元勋事迹",
+        question: "下列科学家中，不属于“两弹一星”功勋奖章获得者的是哪一位？",
+        options: ["钱学森", "邓稼先", "于敏", "钱伟长"],
+        answerIndex: 3
+      },
+      {
+        id: 20,
+        category: "元勋事迹",
+        question: "1999年受表彰的23位“两弹一星”功勋奖章获得者中，唯一以烈士身份被追授的是谁？",
+        options: ["钱三强", "赵九章", "郭永怀", "陈芳允"],
+        answerIndex: 2
+      },
+      {
+        id: 21,
+        category: "重大事件",
+        question: "我国第一枚装有核弹头的地地导弹飞行爆炸成功是在哪一年？",
+        options: ["1964年", "1965年", "1966年", "1967年"],
+        answerIndex: 2
+      },
+      {
+        id: 22,
+        category: "重大事件",
+        question: "中国是世界上第几个拥有氢弹的国家？",
+        options: ["第二个", "第三个", "第四个", "第五个"],
+        answerIndex: 2
+      },
+      {
+        id: 23,
+        category: "重大事件",
+        question: "从第一颗原子弹爆炸成功到第一颗氢弹试验成功，我国大约用了多长时间？",
+        options: ["不到1年", "约1年半", "2年多", "近5年"],
+        answerIndex: 2
+      },
+      {
+        id: 24,
+        category: "重大事件",
+        question: "发射“东方红一号”卫星所使用的运载火箭是哪一型？",
+        options: ["长征二号", "长征一号", "风暴一号", "东风四号"],
+        answerIndex: 1
+      },
+      {
+        id: 25,
+        category: "重大事件",
+        question: "1964年第一颗原子弹爆炸成功后，中国政府郑重声明的核心立场是什么？",
+        options: [
+          "中国在任何时候、任何情况下都不首先使用核武器",
+          "以核优势争夺国际事务中的话语权",
+          "优先发展战术核武器用于战场自卫",
+          "把核技术转让给同盟国家以增强阵营力量"
+        ],
+        answerIndex: 0
+      },
+      {
+        id: 26,
+        category: "重大事件",
+        question: "1962年成立的中央专门委员会负责统一领导“两弹”研制，其主任是谁？",
+        options: ["刘少奇", "聂荣臻", "邓小平", "周恩来"],
+        answerIndex: 3
+      },
+      {
+        id: 27,
+        category: "重大事件",
+        question: "“东方红一号”卫星在太空向地面播送的乐曲是哪一首？",
+        options: ["《歌唱祖国》", "《义勇军进行曲》", "《东方红》", "《没有共产党就没有新中国》"],
+        answerIndex: 2
+      },
+      {
+        id: 28,
+        category: "重大事件",
+        question: "中国第一颗原子弹爆炸成功的具体日期是哪一天？",
+        options: ["1964年10月16日", "1965年5月14日", "1966年10月27日", "1967年6月17日"],
+        answerIndex: 0
+      },
+      {
+        id: 29,
+        category: "重大事件",
+        question: "中国第一颗氢弹空爆试验成功的具体日期是哪一天？",
+        options: ["1966年10月27日", "1968年12月5日", "1967年6月17日", "1970年4月24日"],
+        answerIndex: 2
+      },
+      {
+        id: 30,
+        category: "精神内涵",
+        question: "“两弹一星”精神被正式完整概括提出是在哪一年？",
+        options: ["1988年", "1999年", "2001年", "2003年"],
+        answerIndex: 1
+      },
+      {
+        id: 31,
+        category: "精神内涵",
+        question: "“两弹一星”精神是在哪次大会上被完整概括提出的？",
+        options: [
+          "全国科学大会",
+          "表彰为研制“两弹一星”作出突出贡献的科技专家大会",
+          "全国教育工作会议",
+          "全国科学技术普及工作会议"
+        ],
+        answerIndex: 1
+      },
+      {
+        id: 32,
+        category: "精神内涵",
+        question: "“两弹一星”精神中“大力协同”强调的是什么？",
+        options: [
+          "各单位独立作业、互不干涉",
+          "把有限资源优先投向经济效益高的项目",
+          "全国一盘棋、协同攻关、集中力量办大事",
+          "依靠个人才能单点突破"
+        ],
+        answerIndex: 2
+      },
+      {
+        id: 33,
+        category: "精神内涵",
+        question: "“两弹一星”精神被概括为多少个字？",
+        options: ["8个字", "16个字", "24个字", "32个字"],
+        answerIndex: 2
+      }
+    ];
+
+    window.currentIndex = 0;
+    window.starCount = 0;
+
+    function pickQuestions() {
+      const pool = QUESTIONS.slice();
+      for (let i = pool.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [pool[i], pool[j]] = [pool[j], pool[i]];
+      }
+      return pool.slice(0, 10);
+    }
+
+    window.quizQuestions = pickQuestions();
+
+    function renderQuestion() {
+      var q = quizQuestions[currentIndex];
+      document.getElementById("question").textContent = q.question;
+      var optionsBox = document.getElementById("options");
+      optionsBox.textContent = "";
+      q.options.forEach(function (text, idx) {
+        var btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "option-btn";
+        btn.textContent = text;
+        btn.addEventListener("click", function () {
+          checkAnswer(idx);
+        });
+        optionsBox.appendChild(btn);
+      });
+    }
+
+    function checkAnswer(selectedIndex) {
+      var q = quizQuestions[currentIndex];
+      var correctText = q.options[q.answerIndex];
+      var feedback = document.getElementById("feedback");
+      if (selectedIndex === q.answerIndex) {
+        feedback.textContent = "回答正确";
+        lightUpStar();
+      } else {
+        feedback.textContent = "回答错误，正确答案：" + correctText;
+      }
+      document.querySelectorAll(".option-btn").forEach(function (btn) {
+        btn.disabled = true;
+      });
+      showNextBtn();
+    }
+
+    function lightUpStar() {
+      starCount += 1;
+      document.querySelectorAll(".star")[starCount - 1].classList.add("lit");
+    }
+
+    function showNextBtn() {
+      var nextBtn = document.getElementById("nextBtn");
+      nextBtn.textContent = currentIndex === quizQuestions.length - 1 ? "查看结果" : "下一题";
+      nextBtn.style.display = "inline-block";
+    }
+
+    function hideNextBtn() {
+      document.getElementById("nextBtn").style.display = "none";
+    }
+
+    document.getElementById("nextBtn").addEventListener("click", function () {
+      var feedback = document.getElementById("feedback");
+      if (currentIndex === quizQuestions.length - 1) {
+        handleCompletion();
+        return;
+      }
+      currentIndex += 1;
+      feedback.textContent = "";
+      hideNextBtn();
+      renderQuestion();
+    });
+
+    function handleCompletion() {
+      var total = quizQuestions.length;
+      var card = document.getElementById("card");
+      var retryBtn = document.getElementById("retryBtn");
+      hideNextBtn();
+      if (starCount === total) {
+        document.getElementById("cardProgress").textContent = "已集星：" + starCount + "/" + total;
+        card.style.display = "block";
+        retryBtn.style.display = "none";
+      } else {
+        card.style.display = "none";
+        retryBtn.style.display = "inline-block";
+        document.getElementById("feedback").textContent =
+          "还差 " + (total - starCount) + " 颗星，未集满";
+      }
+    }
+
+    function resetGame() {
+      currentIndex = 0;
+      starCount = 0;
+      quizQuestions = pickQuestions();
+      document.querySelectorAll(".star").forEach(function (star) {
+        star.classList.remove("lit");
+      });
+      document.getElementById("feedback").textContent = "";
+      hideNextBtn();
+      document.getElementById("card").style.display = "none";
+      document.getElementById("retryBtn").style.display = "none";
+      renderQuestion();
+    }
+
+    document.getElementById("restartBtn").addEventListener("click", resetGame);
+    document.getElementById("retryBtn").addEventListener("click", resetGame);
+
+    if (/MicroMessenger/i.test(navigator.userAgent)) {
+      document.getElementById("wechatHint").style.display = "block";
+    }
+
+    renderQuestion();
+  </script>
+</body>
+</html>
